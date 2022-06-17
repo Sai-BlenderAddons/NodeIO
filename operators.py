@@ -107,11 +107,51 @@ class NODEIO_OT_delete_template(bpy.types.Operator):
         
         return {'FINISHED'}
 
+# tools
+class NODEIO_OT_frame_selected_nodes(bpy.types.Operator):
+    bl_idname = "nodeio.frame_selected_nodes"
+    bl_label = "Frame selected"
+    bl_description = "frame selected nodes"
+
+    def execute(self, context):
+        node_tree = context.space_data.edit_tree
+        frame = node_tree.nodes.new('NodeFrame')
+        frame.label = 'NodeIO_Frame'
+        for node in node_tree.nodes:
+            if node.select:
+                 node.parent = frame
+        
+        return {'FINISHED'}
+
+class NODEIO_OT_select_framed_nodes(bpy.types.Operator):
+    bl_idname = "nodeio.select_framed_nodes"
+    bl_label = "Select framed"
+    bl_description = "select framed nodes"
+
+    def execute(self, context):
+        node_tree = context.space_data.edit_tree
+        frames = list()
+        selected_nodes = [node for node in node_tree.nodes if node.select]
+        [frames.append(node) for node in selected_nodes if node.bl_idname == 'NodeFrame']
+        [frames.append(node.parent) for node in node_tree.nodes if node.select and node.parent]
+        
+        for node in node_tree.nodes:
+            if node.parent in frames:
+                node.select = True
+            elif node in frames:
+                node.select = True
+            else:
+                node.select = False
+        
+        return {'FINISHED'}
+
 classes = (
     NODEIO_OT_export,
     NODEIO_OT_import,
     NODEIO_OT_refresh_list,
     NODEIO_OT_delete_template,
+    NODEIO_OT_frame_selected_nodes,
+    NODEIO_OT_select_framed_nodes,
 )
 
 def register():

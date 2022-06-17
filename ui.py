@@ -53,12 +53,28 @@ class NODEIO_PT_manager(bpy.types.Panel):
         col.separator()
         col.menu("NODEIO_MT_list_menu", text='', icon='DOWNARROW_HLT')
 
+class NODEIO_PT_tools(bpy.types.Panel):
+    bl_label = "NodeIO Tools"
+    bl_space_type = "NODE_EDITOR"
+    bl_region_type = "UI"
+    bl_category = "NodeIO"
+    # bl_parent_id = "NODEIO_PT_panel"
+    bl_options = {"DEFAULT_CLOSED"}  
+    
+    def draw(self,context):
+        layout = self.layout
+        layout.use_property_split = True
+        row = layout.row(align = True)
+        col = row.column()
+        col.operator("nodeio.frame_selected_nodes")
+        col.operator("nodeio.select_framed_nodes")
 
 classes = (
     # NODEIO_PT_panel,
     ITEM_UL_items,
     NODEIO_MT_list_menu,
     NODEIO_PT_manager,
+    NODEIO_PT_tools,
 
 )
 
